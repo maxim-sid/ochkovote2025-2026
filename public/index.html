@@ -163,10 +163,10 @@ body {
 
 <div id="authOverlay">
   <div class="auth-card">
-    <h6 class="gala-font mb-1">Official Ballot</h6>
-    <h2 class="title-font mb-5">Identify Yourself</h2>
+    <h6 class="gala-font mb-1">ОФФИЦИАЛЬНОЕ ГОЛОСОВАНИЕ</h6>
+    <h2 class="title-font mb-5">Ваше имя</h2>
     <input id="userName" class="form-control form-control-gala mb-4" placeholder="FULL NAME">
-    <button id="loginBtn" class="btn-gala w-100">Enter Ceremony</button>
+    <button id="loginBtn" class="btn-gala w-100">Зайти на церемонию</button>
   </div>
 </div>
 
@@ -174,7 +174,7 @@ body {
   <div class="row justify-content-center">
     <div class="col-lg-8">
       <div class="text-center mb-5">
-        <h6 class="gala-font mb-2">Category Selection</h6>
+        <h6 class="gala-font mb-2">Выбор Категории</h6>
         <div class="progress-track">
             <div id="progressBar" class="progress-fill" style="width: 0%"></div>
         </div>
@@ -185,7 +185,7 @@ body {
       <div id="optionsContainer" class="glass-card mb-4"></div>
       
       <div class="text-center">
-        <button id="submitVote" class="btn-gala px-5" disabled>Cast Official Ballot</button>
+        <button id="submitVote" class="btn-gala px-5" disabled>Выбрать Опции</button>
       </div>
     </div>
   </div>
@@ -228,7 +228,7 @@ function loadCategory() {
   
   const progPercent = ((currentIndex + 1) / categories.length) * 100;
   progressBar.style.width = `${progPercent}%`;
-  selectionHint.innerText = `You may choose up to ${voteLimit} nominee(s)`;
+  selectionHint.innerText = `Вы можете выбрать до ${voteLimit} номинации`;
 
   optionsContainer.innerHTML = "";
   submitVote.disabled = true;
@@ -261,7 +261,7 @@ function loadCategory() {
 /* LOGIN */
 loginBtn.onclick = async () => {
   const name = userName.value.trim();
-  if (name.length < 2) return alert("Enter your name");
+  if (name.length < 2) return alert("Введите имя");
 
   // Sanitize name for database path (remove dots, spaces, etc)
   const safeName = name.replace(/[.#$[\]\s]/g, "_");
@@ -284,7 +284,7 @@ submitVote.onclick = async () => {
   const voterID = localStorage.getItem("safeName");
 
   submitVote.disabled = true;
-  submitVote.innerText = "Registering Ballot...";
+  submitVote.innerText = "Регистрируем Голос...";
 
   try {
     // UPDATED: Now saves to votes/Name_Surname/Category_Name
@@ -299,13 +299,13 @@ submitVote.onclick = async () => {
 
     currentIndex++;
     if (currentIndex < categories.length) {
-      submitVote.innerText = "Submit Vote";
+      submitVote.innerText = "Подтвердить Голос";
       loadCategory();
     } else {
       triggerFinale();
     }
   } catch (err) {
-    alert("Ballot transmission failed.");
+    alert("ААА ОШИБКА 4012341213.");
     submitVote.disabled = false;
   }
 };
@@ -340,8 +340,8 @@ function triggerFinale() {
   optionsContainer.innerHTML = `
     <div class="text-center py-5">
         <h2 class="gala-font" style="color: #d4af37">Thank You</h2>
-        <p>Your official selections have been recorded for the 2025 Gala.</p>
-        <button onclick="location.reload()" class="btn-gala mt-3" style="font-size: 0.8rem">Return to Entrance</button>
+        <p>Ваш официальный выбор 2025 года подтвержден.</p>
+        <button onclick="location.reload()" class="btn-gala mt-3" style="font-size: 0.8rem">Вернуться к входу</button>
     </div>`;
   submitVote.style.display = "none";
 }
