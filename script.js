@@ -10,6 +10,8 @@ const firebaseConfig = {
     appId: "VITE_FIREBASE_APP_ID"
 };
 
+console.log("DB URL =", firebaseConfig);
+
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
