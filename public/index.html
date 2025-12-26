@@ -10,75 +10,167 @@
 
 <style>
 :root {
-  --glass: rgba(255,255,255,0.05);
-  --accent: #00d4ff;
-  --bg: #0a0a0c;
+  --bg-main: #050507;
+  --bg-panel: rgba(255,255,255,0.035);
+  --border-soft: rgba(255,255,255,0.08);
+  --accent: #00e5ff;
+  --accent-dim: rgba(0,229,255,0.25);
+  --text-main: #e8f1f5;
+  --text-dim: #8fa3ad;
 }
 
 body {
-  background: radial-gradient(circle at top right, #1a1a2e, #0a0a0c);
-  color: white;
-  font-family: 'Inter', sans-serif;
+  background:
+    radial-gradient(800px at 70% -10%, rgba(0,229,255,0.08), transparent 60%),
+    radial-gradient(600px at -10% 20%, rgba(255,255,255,0.04), transparent 50%),
+    var(--bg-main);
+  color: var(--text-main);
+  font-family: 'Inter', system-ui, sans-serif;
   min-height: 100vh;
+  letter-spacing: 0.2px;
 }
 
-.title-font {
-  font-family: 'Syncopate', sans-serif;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-}
-
+/* ===== AUTH OVERLAY ===== */
 #authOverlay {
   position: fixed;
   inset: 0;
-  background: var(--bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  transition: transform 0.8s cubic-bezier(0.87, 0, 0.13, 1);
+  background: linear-gradient(180deg, #050507, #030305);
+  display: grid;
+  place-items: center;
+  z-index: 999;
+  transition: transform 1s cubic-bezier(0.85, 0, 0.15, 1);
 }
 
 .auth-card {
-  background: var(--glass);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255,255,255,0.1);
-  padding: 3rem;
-  border-radius: 30px;
-  max-width: 450px;
-  width: 100%;
+  width: 420px;
+  padding: 3.2rem;
+  border-radius: 24px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-soft);
+  backdrop-filter: blur(22px);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.02),
+    0 40px 120px rgba(0,0,0,0.6);
   text-align: center;
 }
 
+.auth-card h2 {
+  font-family: 'Syncopate', sans-serif;
+  font-size: 1.2rem;
+  letter-spacing: 4px;
+  margin-bottom: 1.5rem;
+}
+
+.auth-card p {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  margin-bottom: 2rem;
+}
+
+/* ===== INPUT ===== */
+.elite-input {
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border-soft);
+  color: var(--text-main);
+  outline: none;
+  margin-bottom: 1.8rem;
+}
+
+.elite-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent-dim);
+}
+
+/* ===== BUTTON ===== */
+.btn-elite {
+  width: 100%;
+  padding: 14px;
+  border-radius: 999px;
+  background: linear-gradient(
+    135deg,
+    var(--accent),
+    #7af6ff
+  );
+  color: #001014;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  border: none;
+  cursor: pointer;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.btn-elite:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 40px rgba(0,229,255,0.45);
+}
+
+/* ===== MAIN PANEL ===== */
+#mainContent {
+  max-width: 760px;
+  margin: auto;
+  padding-top: 6rem;
+  transition: opacity .8s ease;
+}
+
+#progress {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+}
+
+#voteTitle {
+  font-family: 'Syncopate', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 3px;
+  margin-bottom: 2.4rem;
+}
+
+/* ===== OPTIONS ===== */
 .glass-card {
-  background: var(--glass);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  padding: 1.5rem;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-soft);
+  border-radius: 22px;
+  padding: 1.6rem;
+  backdrop-filter: blur(18px);
 }
 
 .vote-item {
-  cursor: pointer;
-  padding: 1rem;
-  border-radius: 12px;
-  margin-bottom: 0.6rem;
+  padding: 1rem 1.2rem;
+  border-radius: 14px;
   background: rgba(255,255,255,0.02);
+  border: 1px solid transparent;
+  margin-bottom: 0.7rem;
+  cursor: pointer;
+  transition: all .25s ease;
+}
+
+.vote-item:hover {
+  border-color: var(--border-soft);
 }
 
 .vote-item.selected {
-  background: linear-gradient(90deg, rgba(0,212,255,0.2), transparent);
-  border-left: 5px solid var(--accent);
+  border-color: var(--accent);
+  background:
+    linear-gradient(90deg, rgba(0,229,255,0.18), transparent 70%);
+  box-shadow: inset 4px 0 0 var(--accent);
 }
 
-.btn-elite {
-  background: var(--accent);
-  color: black;
-  font-weight: 700;
-  padding: 12px;
-  border-radius: 50px;
-  border: none;
-  text-transform: uppercase;
+/* ===== SUBMIT ===== */
+#submitVote {
+  margin-top: 1.6rem;
 }
+
+#submitVote:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+</style>
+
 </style>
 </head>
 
@@ -109,13 +201,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-/* 🔐 Firebase config injected by GitHub Actions */
-const firebaseConfig = {
-  apiKey: "__API_KEY__",
-  databaseURL: "__DB_URL__",
-  projectId: "__PROJECT_ID__",
-  appId: "__APP_ID__"
-};
+import { firebaseConfig } from "/ochkovote2025-2026/firebase-config.js";
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
