@@ -1,8 +1,8 @@
-name: Deploy to GitHub Pages
+name: Elite Deploy
 
 on:
   push:
-    branches: ["master"] # Or your default branch name
+    branches: ["master"]
 
 permissions:
   contents: read
@@ -10,22 +10,26 @@ permissions:
   id-token: write
 
 jobs:
-  build-and-deploy:
+  deploy:
+    # THIS SECTION IS MANDATORY
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Create JSON from Secret
-        run: |
-          echo '${{ secrets.VOTING_DATA_JSON }}' > data.json
+        run: echo '${{ secrets.VOTING_DATA_JSON }}' > data.json
 
-      - name: Inject Secrets into HTML
+      - name: Inject Firebase Secrets
         run: |
-          sed -i 's|REPLACE_WITH_API_KEY|${{ secrets.FIREBASE_API_KEY }}|g' script.js
-          sed -i 's|REPLACE_WITH_DB_URL|${{ secrets.FIREBASE_DB_URL }}|g' script.js
-          sed -i 's|REPLACE_WITH_PROJECT_ID|${{ secrets.FIREBASE_PROJECT_ID }}|g' script.js
-          sed -i 's|REPLACE_WITH_APP_ID|${{ secrets.FIREBASE_APP_ID }}|g' script.js
+          sed -i 's|VITE_FIREBASE_API_KEY|${{ secrets.FIREBASE_API_KEY }}|g' index.html
+          sed -i 's|VITE_FIREBASE_DB_URL|${{ secrets.FIREBASE_DB_URL }}|g' index.html
+          sed -i 's|VITE_FIREBASE_PROJECT_ID|${{ secrets.FIREBASE_PROJECT_ID }}|g' index.html
+          sed -i 's|VITE_FIREBASE_APP_ID|${{ secrets.FIREBASE_APP_ID }}|g' index.html
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -33,7 +37,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.' # Location of your index.html
+          path: '.'
 
       - name: Deploy to GitHub Pages
         id: deployment
