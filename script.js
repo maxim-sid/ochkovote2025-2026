@@ -62,55 +62,46 @@
         });
     }
 
-    // --- LOGIN & AUTH ---
-    const startPortal = async () => {
+    // This function handles the whole login flow
+    async function startPortal() {
         const nameInput = document.getElementById('userName');
         const name = nameInput.value.trim();
         
         if (name.length < 2) {
-            alert("Please enter a name");
+            alert("Please enter your name.");
             return;
         }
 
         localStorage.setItem('voterName', name);
-        
+
         try {
             await signInAnonymously(auth);
             
-            // Visual Transitions
+            // Animation
             document.getElementById('authOverlay').style.transform = 'translateY(-100%)';
             document.getElementById('mainContent').style.opacity = '1';
             document.getElementById('welcomeMsg').innerText = `OPERATOR: ${name.toUpperCase()}`;
             
             await loadVotingData(); 
-        } catch (e) { 
+        } catch (e) {
             console.error(e);
-            alert("Auth Error: Check your Firebase API Key and ensure Anonymous Auth is enabled."); 
+            alert("Access Denied. Check Firebase Console for Anonymous Auth.");
         }
-    };
+    }
 
-    // Bind the function to the button click
-    document.getElementById('loginBtn').addEventListener('click', startPortal);
+    // ATTACH THE CLICK EVENT DIRECTLY
+    // This is why the button "didn't work" before - it needs to be attached here!
+    document.addEventListener('DOMContentLoaded', () => {
+        const loginBtn = document.getElementById('loginBtn');
+        if (loginBtn) {
+            loginBtn.addEventListener('click', startPortal);
+        }
 
-    // Support pressing "Enter" in the input field
-    document.getElementById('userName').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') startPortal();
-    });
-
-    // Auto-login check
-    window.addEventListener('load', () => {
+        // Auto-login if name exists
         const savedName = localStorage.getItem('voterName');
         if (savedName) {
-            // If name exists, we can pre-fill it or auto-click
             document.getElementById('userName').value = savedName;
             startPortal();
-        }
-    });
-
-    // Auto-login if name exists
-    window.addEventListener('load', () => {
-        if (localStorage.getItem('voterName')) {
-            window.handleLogin();
         }
     });
 
