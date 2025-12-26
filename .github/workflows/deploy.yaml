@@ -21,12 +21,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # ✅ Ensure public folder exists
-      - name: Prepare public folder
-        run: |
-          mkdir -p public
-          cp index.html script.js public/
-
       # ✅ Create voting data INSIDE public
       - name: Create voting data
         run: echo '${{ secrets.VOTING_DATA_JSON }}' > public/data.json
