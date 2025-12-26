@@ -4,8 +4,6 @@ import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/1
 
 import { firebaseConfig } from "./firebase-config.js";
 
-console.log("DB URL =", firebaseConfig);
-
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
