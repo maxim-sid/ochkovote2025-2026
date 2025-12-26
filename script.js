@@ -63,20 +63,49 @@
     }
 
     // --- LOGIN & AUTH ---
-    window.handleLogin = async () => {
-        const name = document.getElementById('userName').value;
-        if (name.length < 2) return alert("Please enter a name");
+    const startPortal = async () => {
+        const nameInput = document.getElementById('userName');
+        const name = nameInput.value.trim();
+        
+        if (name.length < 2) {
+            alert("Please enter a name");
+            return;
+        }
+
         localStorage.setItem('voterName', name);
         
         try {
             await signInAnonymously(auth);
+            
+            // Visual Transitions
             document.getElementById('authOverlay').style.transform = 'translateY(-100%)';
             document.getElementById('mainContent').style.opacity = '1';
             document.getElementById('welcomeMsg').innerText = `OPERATOR: ${name.toUpperCase()}`;
             
-            await loadVotingData(); // Load the JSON only after login
-        } catch (e) { alert("Auth Error: Check your API Key."); }
+            await loadVotingData(); 
+        } catch (e) { 
+            console.error(e);
+            alert("Auth Error: Check your Firebase API Key and ensure Anonymous Auth is enabled."); 
+        }
     };
+
+    // Bind the function to the button click
+    document.getElementById('loginBtn').addEventListener('click', startPortal);
+
+    // Support pressing "Enter" in the input field
+    document.getElementById('userName').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') startPortal();
+    });
+
+    // Auto-login check
+    window.addEventListener('load', () => {
+        const savedName = localStorage.getItem('voterName');
+        if (savedName) {
+            // If name exists, we can pre-fill it or auto-click
+            document.getElementById('userName').value = savedName;
+            startPortal();
+        }
+    });
 
     // Auto-login if name exists
     window.addEventListener('load', () => {
