@@ -4,10 +4,10 @@ import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/1
 
 /* 🔐 Firebase config (GitHub Pages replaces these) */
 const firebaseConfig = {
-    apiKey: "VITE_FIREBASE_API_KEY",
-    databaseURL: "VITE_FIREBASE_DB_URL",
-    projectId: "VITE_FIREBASE_PROJECT_ID",
-    appId: "VITE_FIREBASE_APP_ID"
+  apiKey: window.__FIREBASE__.API_KEY,
+  databaseURL: window.__FIREBASE__.DB_URL,
+  projectId: window.__FIREBASE__.PROJECT_ID,
+  appId: window.__FIREBASE__.APP_ID
 };
 
 console.log("DB URL =", firebaseConfig);
