@@ -1,236 +1,209 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elite Voting Portal | Auth</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Elite Voting Portal</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Syncopate:wght@700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Syncopate:wght@700&display=swap" rel="stylesheet">
 
-    <style>
-        :root { --glass: rgba(255,255,255,0.05); --accent: #00d4ff; --bg: #0a0a0c; }
-        body {
-            background: radial-gradient(circle at top right, #1a1a2e, #0a0a0c);
-            color: white;
-            font-family: 'Inter', sans-serif;
-            min-height: 100vh;
-        }
-        .title-font {
-            font-family: 'Syncopate', sans-serif;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-        }
-        #authOverlay {
-            position: fixed;
-            inset: 0;
-            background: var(--bg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            transition: transform .8s cubic-bezier(0.87, 0, 0.13, 1);
-        }
-        .auth-card {
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 3rem;
-            border-radius: 30px;
-            width: 100%;
-            max-width: 450px;
-            text-align: center;
-        }
-        .glass-card {
-            background: var(--glass);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 20px;
-        }
-        .vote-item {
-            cursor: pointer;
-            padding: 1.2rem;
-            border-radius: 12px;
-            margin-bottom: .8rem;
-            background: rgba(255,255,255,0.02);
-            transition: .3s;
-        }
-        .vote-item.selected {
-            background: linear-gradient(90deg, rgba(0,212,255,.2), transparent);
-            border-left: 5px solid var(--accent);
-        }
-        input.elite-input {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 10px;
-            width: 100%;
-            margin-bottom: 20px;
-        }
-        .btn-elite {
-            background: var(--accent);
-            color: black;
-            font-weight: 700;
-            padding: 12px 30px;
-            border-radius: 50px;
-            border: none;
-            text-transform: uppercase;
-            transition: .3s;
-        }
-        .btn-elite:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(0,212,255,.4);
-        }
-    </style>
+<style>
+:root {
+  --glass: rgba(255,255,255,0.05);
+  --accent: #00d4ff;
+  --bg: #0a0a0c;
+}
+
+body {
+  background: radial-gradient(circle at top right, #1a1a2e, #0a0a0c);
+  color: white;
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+}
+
+.title-font {
+  font-family: 'Syncopate', sans-serif;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+
+#authOverlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  transition: transform 0.8s cubic-bezier(0.87, 0, 0.13, 1);
+}
+
+.auth-card {
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 3rem;
+  border-radius: 30px;
+  max-width: 450px;
+  width: 100%;
+  text-align: center;
+}
+
+.glass-card {
+  background: var(--glass);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 1.5rem;
+}
+
+.vote-item {
+  cursor: pointer;
+  padding: 1rem;
+  border-radius: 12px;
+  margin-bottom: 0.6rem;
+  background: rgba(255,255,255,0.02);
+}
+
+.vote-item.selected {
+  background: linear-gradient(90deg, rgba(0,212,255,0.2), transparent);
+  border-left: 5px solid var(--accent);
+}
+
+.btn-elite {
+  background: var(--accent);
+  color: black;
+  font-weight: 700;
+  padding: 12px;
+  border-radius: 50px;
+  border: none;
+  text-transform: uppercase;
+}
+</style>
 </head>
 
 <body>
 
+<!-- AUTH -->
 <div id="authOverlay">
-    <div class="auth-card">
-        <h2 class="title-font mb-4">Identify Yourself</h2>
-        <p class="text-muted mb-4">Register your name to access the ballots.</p>
-        <input id="userName" class="elite-input" placeholder="Enter Full Name">
-        <button id="loginBtn" class="btn-elite w-100">Enter Portal</button>
-    </div>
+  <div class="auth-card">
+    <h2 class="title-font mb-4">Identify Yourself</h2>
+    <input id="userName" class="form-control mb-3" placeholder="Enter name">
+    <button id="loginBtn" class="btn-elite w-100">Enter</button>
+  </div>
 </div>
 
+<!-- APP -->
 <div class="container py-5" id="mainContent" style="opacity:0">
-    <div class="row justify-content-center">
-        <div class="col-lg-7">
-            <div class="text-center mb-5">
-                <p id="welcomeMsg" style="color:var(--accent)"></p>
-                <h1 id="voteTitle" class="title-font h3"></h1>
-            </div>
+  <div class="text-center mb-4">
+    <p id="progress"></p>
+    <h1 id="voteTitle" class="title-font h4"></h1>
+  </div>
 
-            <div id="optionsContainer" class="glass-card p-4 mb-4"></div>
-            <button id="submitVote" class="btn-elite w-100" disabled>
-                Cast Encrypted Vote
-            </button>
-        </div>
-    </div>
+  <div id="optionsContainer" class="glass-card mb-3"></div>
+  <button id="submitVote" class="btn-elite w-100" disabled>Submit Vote</button>
 </div>
 
-
-<script>
-window.__FIREBASE__ = {
-  API_KEY: "VITE_FIREBASE_API_KEY",
-  DB_URL: "VITE_FIREBASE_DB_URL",
-  PROJECT_ID: "VITE_FIREBASE_PROJECT_ID",
-  APP_ID: "VITE_FIREBASE_APP_ID"
-};
-</script>
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-import { firebaseConfig } from "/ochkovote2025-2026/firebase-config.js";
+/* 🔐 Firebase config injected by GitHub Actions */
+const firebaseConfig = {
+  apiKey: "__API_KEY__",
+  databaseURL: "__DB_URL__",
+  projectId: "__PROJECT_ID__",
+  appId: "__APP_ID__"
+};
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
 
-let voteKey = "";
+/* STATE */
+let categories = [];
+let currentIndex = 0;
 let voteLimit = 1;
-const selectedOptions = new Set();
+let selected = new Set();
 
-/* ---------------- LOAD DATA ---------------- */
-async function loadVotingData() {
-    const res = await fetch("data.json");
-    const data = await res.json();
-
-    voteKey = Object.keys(data)[0];
-    const options = data[voteKey];
-
-    const match = voteKey.match(/\(q(\d+)/);
-    voteLimit = match ? parseInt(match[1]) : 1;
-
-    document.getElementById("voteTitle").innerText =
-        voteKey.split("(")[0];
-
-    renderOptions(options);
+/* LOAD DATA */
+async function loadData() {
+  const res = await fetch("data.json");
+  const json = await res.json();
+  categories = Object.entries(json);
+  loadCategory();
 }
 
-/* ---------------- RENDER ---------------- */
-function renderOptions(options) {
-    const container = document.getElementById("optionsContainer");
-    container.innerHTML = "";
+/* LOAD CATEGORY */
+function loadCategory() {
+  selected.clear();
+  const [key, options] = categories[currentIndex];
 
-    options.forEach(opt => {
-        const div = document.createElement("div");
-        div.className = "vote-item";
-        div.innerText = opt;
+  const match = key.match(/\(q(\d+)/);
+  voteLimit = match ? Number(match[1]) : 1;
 
-        div.onclick = () => {
-            if (selectedOptions.has(opt)) {
-                selectedOptions.delete(opt);
-                div.classList.remove("selected");
-            } else if (selectedOptions.size < voteLimit) {
-                selectedOptions.add(opt);
-                div.classList.add("selected");
-            }
-            document.getElementById("submitVote").disabled =
-                selectedOptions.size === 0;
-        };
+  voteTitle.innerText = key.split("(")[0];
+  progress.innerText = `Category ${currentIndex + 1} / ${categories.length}`;
 
-        container.appendChild(div);
-    });
+  optionsContainer.innerHTML = "";
+  submitVote.disabled = true;
+
+  options.forEach(opt => {
+    const div = document.createElement("div");
+    div.className = "vote-item";
+    div.innerText = opt;
+
+    div.onclick = () => {
+      if (selected.has(opt)) {
+        selected.delete(opt);
+        div.classList.remove("selected");
+      } else if (selected.size < voteLimit) {
+        selected.add(opt);
+        div.classList.add("selected");
+      }
+      submitVote.disabled = selected.size === 0;
+    };
+
+    optionsContainer.appendChild(div);
+  });
 }
 
-/* ---------------- LOGIN ---------------- */
-async function startPortal() {
-    const name = userName.value.trim();
-    if (name.length < 2) {
-        alert("Please enter your name.");
-        return;
+/* LOGIN */
+loginBtn.onclick = async () => {
+  const name = userName.value.trim();
+  if (name.length < 2) return alert("Enter name");
+
+  localStorage.setItem("name", name);
+  await signInAnonymously(auth);
+
+  authOverlay.style.transform = "translateY(-100%)";
+  mainContent.style.opacity = 1;
+
+  loadData();
+};
+
+/* SUBMIT */
+submitVote.onclick = async () => {
+  const [key] = categories[currentIndex];
+
+  await set(
+    ref(db, `votes/${auth.currentUser.uid}/${key}`),
+    {
+      selections: Array.from(selected),
+      timestamp: Date.now()
     }
+  );
 
-    localStorage.setItem("voterName", name);
-
-    try {
-        await signInAnonymously(auth);
-
-        authOverlay.style.transform = "translateY(-100%)";
-        mainContent.style.opacity = "1";
-        welcomeMsg.innerText = `OPERATOR: ${name.toUpperCase()}`;
-
-        await loadVotingData();
-    } catch (e) {
-        console.error(e);
-        alert("Firebase Anonymous Auth is disabled or misconfigured.");
-    }
-}
-
-/* ---------------- INIT ---------------- */
-document.addEventListener("DOMContentLoaded", () => {
-    loginBtn.addEventListener("click", startPortal);
-
-    submitVote.addEventListener("click", async () => {
-        if (!auth.currentUser) {
-            alert("Not authenticated.");
-            return;
-        }
-
-        await set(ref(db, "votes/" + auth.currentUser.uid), {
-            voterName: localStorage.getItem("voterName"),
-            selections: Array.from(selectedOptions),
-            category: voteKey,
-            timestamp: Date.now()
-        });
-
-        alert("Vote submitted.");
-        location.reload();
-    });
-
-    const saved = localStorage.getItem("voterName");
-    if (saved) {
-        userName.value = saved;
-        startPortal();
-    }
-});
-
+  currentIndex++;
+  if (currentIndex < categories.length) {
+    loadCategory();
+  } else {
+    alert("Voting complete. Thank you!");
+    location.reload();
+  }
+};
 </script>
+
 </body>
 </html>
