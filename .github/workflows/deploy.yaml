@@ -21,12 +21,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Create voting data
-        run: echo '${{ secrets.VOTING_DATA_JSON }}' > data.json
+      # ✅ Ensure public folder exists
+      - name: Prepare public folder
+        run: |
+          mkdir -p public
+          cp index.html script.js public/
 
+      # ✅ Create voting data INSIDE public
+      - name: Create voting data
+        run: echo '${{ secrets.VOTING_DATA_JSON }}' > public/data.json
+
+      # ✅ Generate Firebase config INSIDE public
       - name: Generate Firebase Config
         run: |
-          cat <<EOF > firebase-config.js
+          cat <<EOF > public/firebase-config.js
           export const firebaseConfig = {
             apiKey: "${{ secrets.FIREBASE_API_KEY }}",
             databaseURL: "${{ secrets.FIREBASE_DB_URL }}",
@@ -38,11 +46,11 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
-      # ✅ ONLY ONE upload step
+      # ✅ Upload ONLY the public folder
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: public
 
       - name: Deploy to GitHub Pages
         id: deployment
