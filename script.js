@@ -1,76 +1,104 @@
- // YOUR DATA
-    const rawData = {
-        "Лучшая игра вышедшая в 2025 (q1,w1)": [
-            "Battlefield 6",
-            "SAND",
-            "War thunder",
-            "Escape from Duckov",
-            "Clair Obscure: Expedition 33",
-            "Quickie: A Love Hotel Story"
-        ]
+// Import Firebase modules for Realtime Database
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, set, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    // FILL THESE IN FROM YOUR FIREBASE SETTINGS
+    const firebaseConfig = {
+        apiKey: "REPLACE_WITH_API_KEY",
+        databaseURL: "REPLACE_WITH_DB_URL",
+        projectId: "REPLACE_WITH_PROJECT_ID",
+        appId: "REPLACE_WITH_APP_ID"
     };
 
-    // Parsing logic for (qX, wY)
-    const voteKey = Object.keys(rawData)[0];
-    const options = rawData[voteKey];
-    
-    // Extract q value (voting limit) using Regex
-    const qMatch = voteKey.match(/\(q(\d+)/);
-    const voteLimit = qMatch ? parseInt(qMatch[1]) : 1;
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const auth = getAuth(app);
 
-    let selectedCount = 0;
+    let voteKey = "";
+    let voteLimit = 1;
     const selectedOptions = new Set();
 
-    function initVote() {
-        document.getElementById('voteTitle').innerText = voteKey.split('(')[0].trim();
-        document.getElementById('voteLimitInfo').innerText = `Select up to ${voteLimit} candidates`;
-        
-        const container = document.getElementById('optionsContainer');
-        
-        options.forEach(option => {
-            const div = document.createElement('div');
-            div.className = 'vote-item d-flex align-items-center justify-content-between';
-            div.innerHTML = `<span>${option}</span> <div class="status-dot"></div>`;
+    // --- FETCH DATA FROM JSON FILE ---
+    async function loadVotingData() {
+        try {
+            const response = await fetch('data.json');
+            const data = await response.json();
             
-            div.onclick = () => toggleSelection(div, option);
+            // Get the first key (the vote name)
+            voteKey = Object.keys(data)[0];
+            const options = data[voteKey];
+            
+            // Extract the 'q' limit (e.g., q1)
+            const qMatch = voteKey.match(/\(q(\d+)/);
+            voteLimit = qMatch ? parseInt(qMatch[1]) : 1;
+
+            renderOptions(options);
+        } catch (error) {
+            console.error("Error loading JSON:", error);
+        }
+    }
+
+    // --- RENDER OPTIONS ---
+    function renderOptions(options) {
+        const container = document.getElementById('optionsContainer');
+        document.getElementById('voteTitle').innerText = voteKey.split('(')[0];
+        
+        options.forEach(opt => {
+            const div = document.createElement('div');
+            div.className = 'vote-item';
+            div.innerText = opt;
+            div.onclick = () => {
+                if (selectedOptions.has(opt)) {
+                    selectedOptions.delete(opt);
+                    div.classList.remove('selected');
+                } else if (selectedOptions.size < voteLimit) {
+                    selectedOptions.add(opt);
+                    div.classList.add('selected');
+                }
+                document.getElementById('submitVote').disabled = selectedOptions.size === 0;
+            };
             container.appendChild(div);
         });
     }
 
-    function toggleSelection(element, option) {
-        if (selectedOptions.has(option)) {
-            selectedOptions.delete(option);
-            element.classList.remove('selected');
-        } else {
-            if (selectedOptions.size < voteLimit) {
-                selectedOptions.add(option);
-                element.classList.add('selected');
-            } else {
-                alert(`You can only select ${voteLimit} options.`);
-            }
-        }
+    // --- LOGIN & AUTH ---
+    window.handleLogin = async () => {
+        const name = document.getElementById('userName').value;
+        if (name.length < 2) return alert("Please enter a name");
+        localStorage.setItem('voterName', name);
         
-        // Toggle Submit Button
-        document.getElementById('submitVote').disabled = selectedOptions.size === 0;
-    }
-
-    document.getElementById('submitVote').onclick = async () => {
-        const finalVotes = Array.from(selectedOptions);
-        console.log("Submitting to Firebase/Database:", finalVotes);
-        
-        // FIREBASE INTEGRATION PLACEHOLDER
-        /*
         try {
-            await addDoc(collection(db, "votes"), {
-                category: voteKey,
-                selections: finalVotes,
-                timestamp: serverTimestamp()
-            });
-            alert("Vote Cast Successfully!");
-        } catch (e) { console.error(e); }
-        */
-        
-        alert("Thank you! You voted for: " + finalVotes.join(", "));
+            await signInAnonymously(auth);
+            document.getElementById('authOverlay').style.transform = 'translateY(-100%)';
+            document.getElementById('mainContent').style.opacity = '1';
+            document.getElementById('welcomeMsg').innerText = `OPERATOR: ${name.toUpperCase()}`;
+            
+            await loadVotingData(); // Load the JSON only after login
+        } catch (e) { alert("Auth Error: Check your API Key."); }
     };
 
-    initVote();
+    // Auto-login if name exists
+    window.addEventListener('load', () => {
+        if (localStorage.getItem('voterName')) {
+            window.handleLogin();
+        }
+    });
+
+    // --- SUBMIT VOTE ---
+    document.getElementById('submitVote').onclick = async () => {
+        const user = auth.currentUser;
+        const name = localStorage.getItem('voterName');
+
+        try {
+            await set(ref(db, 'votes/' + user.uid), {
+                voterName: name,
+                selections: Array.from(selectedOptions),
+                category: voteKey,
+                timestamp: Date.now()
+            });
+            
+            alert("Ballot Synced to Cloud.");
+            location.reload();
+        } catch (e) { alert("Submission failed."); }
+    };

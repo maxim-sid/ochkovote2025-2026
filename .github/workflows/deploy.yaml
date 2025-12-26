@@ -1,0 +1,35 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: ["master"] # Or your default branch name
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create JSON from Secret
+        run: |
+          echo '${{ secrets.VOTING_DATA_JSON }}' > data.json
+
+      - name: Inject Secrets into HTML
+        run: |
+          sed -i 's|REPLACE_WITH_API_KEY|${{ secrets.FIREBASE_API_KEY }}|g' script.js
+          sed -i 's|REPLACE_WITH_DB_URL|${{ secrets.FIREBASE_DB_URL }}|g' script.js
+          sed -i 's|REPLACE_WITH_PROJECT_ID|${{ secrets.FIREBASE_PROJECT_ID }}|g' script.js
+          sed -i 's|REPLACE_WITH_APP_ID|${{ secrets.FIREBASE_APP_ID }}|g' script.js
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.' # Location of your index.html
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

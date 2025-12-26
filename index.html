@@ -3,93 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elite Voting Portal | 2025</title>
+    <title>Elite Voting Portal | Auth</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Syncopate:wght@700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --glass: rgba(255, 255, 255, 0.05);
-            --accent: #00d4ff;
-            --bg: #0a0a0c;
-        }
-
-        body {
-            background-color: var(--bg);
-            color: #ffffff;
-            font-family: 'Inter', sans-serif;
-            background: radial-gradient(circle at top right, #1a1a2e, #0a0a0c);
-            min-height: 100vh;
-        }
-
+        :root { --glass: rgba(255, 255, 255, 0.05); --accent: #00d4ff; --bg: #0a0a0c; }
+        body { background: radial-gradient(circle at top right, #1a1a2e, #0a0a0c); color: white; font-family: 'Inter', sans-serif; min-height: 100vh; overflow-x: hidden; }
         .title-font { font-family: 'Syncopate', sans-serif; text-transform: uppercase; letter-spacing: 4px; }
-
-        .glass-card {
-            background: var(--glass);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 20px;
-            transition: all 0.3s ease;
+        
+        /* Auth Overlay */
+        #authOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); z-index: 1000; display: flex; align-items: center; justify-content: center;
+            transition: transform 0.8s cubic-bezier(0.87, 0, 0.13, 1);
         }
-
-        .vote-item {
-            cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 1.5rem;
-            border-radius: 15px;
-            margin-bottom: 1rem;
-            transition: 0.3s;
-            background: rgba(255,255,255,0.02);
+        .auth-card { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); padding: 3rem; border-radius: 30px; width: 100%; max-width: 450px; text-align: center; }
+        
+        /* Voting UI */
+        .glass-card { background: var(--glass); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; }
+        .vote-item { cursor: pointer; border: 1px solid rgba(255,255,255,0.05); padding: 1.2rem; border-radius: 12px; margin-bottom: 0.8rem; transition: 0.3s; background: rgba(255,255,255,0.02); }
+        .vote-item.selected { background: linear-gradient(90deg, rgba(0,212,255,0.2), transparent); border-left: 5px solid var(--accent); }
+        
+        input.elite-input {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            color: white; padding: 12px 20px; border-radius: 10px; width: 100%; margin-bottom: 20px; outline: none;
         }
-
-        .vote-item:hover {
-            background: rgba(255,255,255,0.08);
-            transform: translateX(10px);
-            border-color: var(--accent);
-        }
-
-        .vote-item.selected {
-            background: linear-gradient(90deg, rgba(0,212,255,0.2), transparent);
-            border-left: 5px solid var(--accent);
-        }
-
-        .btn-elite {
-            background: var(--accent);
-            color: black;
-            font-weight: 700;
-            padding: 15px 40px;
-            border-radius: 50px;
-            text-transform: uppercase;
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
-            border: none;
-        }
-
-        .btn-elite:disabled { background: #444; color: #888; box-shadow: none; }
-
-        .badge-limit { font-size: 0.8rem; color: var(--accent); border: 1px solid var(--accent); padding: 5px 12px; border-radius: 20px; }
+        input.elite-input:focus { border-color: var(--accent); box-shadow: 0 0 10px rgba(0,212,255,0.2); }
+        .btn-elite { background: var(--accent); color: black; font-weight: 700; padding: 12px 30px; border-radius: 50px; text-transform: uppercase; border: none; cursor: pointer; transition: 0.3s; }
+        .btn-elite:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(0, 212, 255, 0.4); }
     </style>
 </head>
 <body>
 
-<div class="container py-5">
+<div id="authOverlay">
+    <div class="auth-card">
+        <h2 class="title-font mb-4" style="font-size: 1.5rem;">Identify Yourself</h2>
+        <p class="text-muted mb-4">Register your name to access the 2025 ballots.</p>
+        <input type="text" id="userName" class="elite-input" placeholder="Enter Full Name">
+        <button onclick="handleLogin()" class="btn-elite w-100">Enter Portal</button>
+    </div>
+</div>
+
+<div class="container py-5" id="mainContent" style="opacity: 0;">
     <div class="row justify-content-center">
-        <div class="col-lg-8">
+        <div class="col-lg-7">
             <div class="text-center mb-5">
-                <h6 class="text-uppercase text-muted mb-2">Awards Season</h6>
-                <h1 id="voteTitle" class="title-font mb-4">Loading Vote...</h1>
-                <div id="voteLimitInfo" class="badge-limit"></div>
+                <p id="welcomeMsg" class="text-accent mb-2" style="color: var(--accent);"></p>
+                <h1 id="voteTitle" class="title-font h3"></h1>
             </div>
-
-            <div id="optionsContainer" class="glass-card p-4 p-md-5 mb-4">
-                </div>
-
-            <div class="text-center">
-                <button id="submitVote" class="btn btn-elite" disabled>Submit Final Ballots</button>
-            </div>
+            <div id="optionsContainer" class="glass-card p-4 mb-4"></div>
+            <button id="submitVote" class="btn-elite w-100" disabled>Cast Encrypted Vote</button>
         </div>
     </div>
 </div>
 
-<script src="script.js"></script>
+<script type="module" src="script.js">
 
+</script>
 </body>
 </html>
