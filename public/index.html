@@ -8,192 +8,187 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Syncopate:wght@700&display=swap" rel="stylesheet">
 
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
 <style>
 :root {
-  --bg-main: #050507;
-  --bg-panel: rgba(255,255,255,0.035);
-  --border-soft: rgba(255,255,255,0.08);
-  --accent: #00e5ff;
-  --accent-dim: rgba(0,229,255,0.25);
-  --text-main: #e8f1f5;
-  --text-dim: #8fa3ad;
+  --gold: #d4af37;
+  --gold-glow: rgba(212, 175, 55, 0.3);
+  --glass: rgba(255, 255, 255, 0.03);
+  --bg: #050505;
 }
 
 body {
-  background:
-    radial-gradient(800px at 70% -10%, rgba(0,229,255,0.08), transparent 60%),
-    radial-gradient(600px at -10% 20%, rgba(255,255,255,0.04), transparent 50%),
-    var(--bg-main);
-  color: var(--text-main);
-  font-family: 'Inter', system-ui, sans-serif;
+  background: radial-gradient(circle at top right, #1a1a1a, #050505);
+  color: #e0e0e0;
+  font-family: 'Inter', sans-serif;
   min-height: 100vh;
-  letter-spacing: 0.2px;
+  overflow-x: hidden;
 }
 
-/* ===== AUTH OVERLAY ===== */
+.gala-font {
+  font-family: 'Cinzel', serif;
+  letter-spacing: 2px;
+  color: var(--gold);
+}
+
+.title-font {
+  font-family: 'Syncopate', sans-serif;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  background: linear-gradient(to bottom, #fff 0%, var(--gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* AUTH OVERLAY */
 #authOverlay {
   position: fixed;
   inset: 0;
-  background: linear-gradient(180deg, #050507, #030305);
-  display: grid;
-  place-items: center;
-  z-index: 999;
-  transition: transform 1s cubic-bezier(0.85, 0, 0.15, 1);
+  background: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  transition: transform 1.2s cubic-bezier(0.8, 0, 0.2, 1);
 }
 
 .auth-card {
-  width: 420px;
-  padding: 3.2rem;
-  border-radius: 24px;
-  background: var(--bg-panel);
-  border: 1px solid var(--border-soft);
-  backdrop-filter: blur(22px);
-  box-shadow:
-    0 0 0 1px rgba(255,255,255,0.02),
-    0 40px 120px rgba(0,0,0,0.6);
+  background: linear-gradient(145deg, rgba(20,20,20,0.9), rgba(5,5,5,0.9));
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  padding: 4rem 3rem;
+  border-radius: 40px;
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+
+.form-control-gala {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  color: white;
+  border-radius: 0;
+  border-bottom: 2px solid var(--gold);
+  padding: 15px;
   text-align: center;
 }
 
-.auth-card h2 {
-  font-family: 'Syncopate', sans-serif;
-  font-size: 1.2rem;
-  letter-spacing: 4px;
-  margin-bottom: 1.5rem;
+.form-control-gala:focus {
+  background: rgba(255,255,255,0.08);
+  box-shadow: 0 0 15px var(--gold-glow);
+  border-color: var(--gold);
 }
 
-.auth-card p {
-  color: var(--text-dim);
-  font-size: 0.9rem;
-  margin-bottom: 2rem;
-}
-
-/* ===== INPUT ===== */
-.elite-input {
-  width: 100%;
-  padding: 14px 18px;
-  border-radius: 14px;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid var(--border-soft);
-  color: var(--text-main);
-  outline: none;
-  margin-bottom: 1.8rem;
-}
-
-.elite-input:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 1px var(--accent-dim);
-}
-
-/* ===== BUTTON ===== */
-.btn-elite {
-  width: 100%;
-  padding: 14px;
-  border-radius: 999px;
-  background: linear-gradient(
-    135deg,
-    var(--accent),
-    #7af6ff
-  );
-  color: #001014;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  border: none;
-  cursor: pointer;
-  transition: transform .25s ease, box-shadow .25s ease;
-}
-
-.btn-elite:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 12px 40px rgba(0,229,255,0.45);
-}
-
-/* ===== MAIN PANEL ===== */
-#mainContent {
-  max-width: 760px;
-  margin: auto;
-  padding-top: 6rem;
-  transition: opacity .8s ease;
-}
-
-#progress {
-  font-size: 0.75rem;
-  color: var(--text-dim);
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  margin-bottom: 0.6rem;
-}
-
-#voteTitle {
-  font-family: 'Syncopate', sans-serif;
-  font-size: 1.1rem;
-  letter-spacing: 3px;
-  margin-bottom: 2.4rem;
-}
-
-/* ===== OPTIONS ===== */
+/* VOTING UI */
 .glass-card {
-  background: var(--bg-panel);
-  border: 1px solid var(--border-soft);
-  border-radius: 22px;
-  padding: 1.6rem;
-  backdrop-filter: blur(18px);
+  background: var(--glass);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 24px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
 .vote-item {
-  padding: 1rem 1.2rem;
-  border-radius: 14px;
-  background: rgba(255,255,255,0.02);
-  border: 1px solid transparent;
-  margin-bottom: 0.7rem;
   cursor: pointer;
-  transition: all .25s ease;
+  padding: 1.2rem;
+  border-radius: 12px;
+  margin-bottom: 0.8rem;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid transparent;
+  transition: all 0.4s ease;
+  animation: slideUp 0.5s ease backwards;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .vote-item:hover {
-  border-color: var(--border-soft);
+  background: rgba(212, 175, 55, 0.05);
+  border-color: var(--gold-glow);
+  transform: scale(1.02);
 }
 
 .vote-item.selected {
-  border-color: var(--accent);
-  background:
-    linear-gradient(90deg, rgba(0,229,255,0.18), transparent 70%);
-  box-shadow: inset 4px 0 0 var(--accent);
+  background: linear-gradient(90deg, rgba(212, 175, 55, 0.15), transparent);
+  border-left: 4px solid var(--gold);
+  color: var(--gold);
 }
 
-/* ===== SUBMIT ===== */
-#submitVote {
-  margin-top: 1.6rem;
+.btn-gala {
+  background: linear-gradient(135deg, #d4af37 0%, #f9e29c 50%, #d4af37 100%);
+  color: #1a1a1a;
+  font-weight: 800;
+  padding: 18px;
+  border-radius: 4px;
+  border: none;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: 0.3s;
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
 }
 
-#submitVote:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
+.btn-gala:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px var(--gold-glow);
 }
-</style>
+
+.btn-gala:disabled {
+  background: #333;
+  color: #666;
+}
+
+.progress-track {
+  height: 2px;
+  background: rgba(255,255,255,0.1);
+  width: 100%;
+  margin: 20px 0;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--gold);
+  box-shadow: 0 0 10px var(--gold);
+  transition: width 0.8s ease;
+}
 
 </style>
 </head>
 
 <body>
 
-<!-- AUTH -->
 <div id="authOverlay">
   <div class="auth-card">
-    <h2 class="title-font mb-4">Identify Yourself</h2>
-    <input id="userName" class="form-control mb-3" placeholder="Enter name">
-    <button id="loginBtn" class="btn-elite w-100">Enter</button>
+    <h6 class="gala-font mb-1">Official Ballot</h6>
+    <h2 class="title-font mb-5">Identify Yourself</h2>
+    <input id="userName" class="form-control form-control-gala mb-4" placeholder="FULL NAME">
+    <button id="loginBtn" class="btn-gala w-100">Enter Ceremony</button>
   </div>
 </div>
 
-<!-- APP -->
-<div class="container py-5" id="mainContent" style="opacity:0">
-  <div class="text-center mb-4">
-    <p id="progress"></p>
-    <h1 id="voteTitle" class="title-font h4"></h1>
-  </div>
+<div class="container py-5" id="mainContent" style="opacity:0; transition: opacity 1s;">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="text-center mb-5">
+        <h6 class="gala-font mb-2">Category Selection</h6>
+        <div class="progress-track">
+            <div id="progressBar" class="progress-fill" style="width: 0%"></div>
+        </div>
+        <h1 id="voteTitle" class="title-font mt-4"></h1>
+        <p id="selectionHint" class="text-muted mt-2" style="font-size: 0.8rem;"></p>
+      </div>
 
-  <div id="optionsContainer" class="glass-card mb-3"></div>
-  <button id="submitVote" class="btn-elite w-100" disabled>Submit Vote</button>
+      <div id="optionsContainer" class="glass-card mb-4"></div>
+      
+      <div class="text-center">
+        <button id="submitVote" class="btn-gala px-5" disabled>Cast Official Ballot</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script type="module">
@@ -229,15 +224,19 @@ function loadCategory() {
   const match = key.match(/\(q(\d+)/);
   voteLimit = match ? Number(match[1]) : 1;
 
-  voteTitle.innerText = key.split("(")[0];
-  progress.innerText = `Category ${currentIndex + 1} / ${categories.length}`;
+  voteTitle.innerText = key.split("(")[0].trim();
+  
+  const progPercent = ((currentIndex + 1) / categories.length) * 100;
+  progressBar.style.width = `${progPercent}%`;
+  selectionHint.innerText = `You may choose up to ${voteLimit} nominee(s)`;
 
   optionsContainer.innerHTML = "";
   submitVote.disabled = true;
 
-  options.forEach(opt => {
+  options.forEach((opt, index) => {
     const div = document.createElement("div");
     div.className = "vote-item";
+    div.style.animationDelay = `${index * 0.1}s`;
     div.innerText = opt;
 
     div.onclick = () => {
@@ -246,11 +245,15 @@ function loadCategory() {
         div.classList.remove("selected");
       } else if (selected.size < voteLimit) {
         selected.add(opt);
-        div.classList.add("selected");
+        div.classList.add('selected');
+      } else if (voteLimit === 1) {
+        selected.clear();
+        document.querySelectorAll('.vote-item').forEach(i => i.classList.remove('selected'));
+        selected.add(opt);
+        div.classList.add('selected');
       }
       submitVote.disabled = selected.size === 0;
     };
-
     optionsContainer.appendChild(div);
   });
 }
@@ -258,9 +261,13 @@ function loadCategory() {
 /* LOGIN */
 loginBtn.onclick = async () => {
   const name = userName.value.trim();
-  if (name.length < 2) return alert("Enter name");
+  if (name.length < 2) return alert("Enter your name");
 
+  // Sanitize name for database path (remove dots, spaces, etc)
+  const safeName = name.replace(/[.#$[\]\s]/g, "_");
   localStorage.setItem("name", name);
+  localStorage.setItem("safeName", safeName);
+
   await signInAnonymously(auth);
 
   authOverlay.style.transform = "translateY(-100%)";
@@ -269,26 +276,75 @@ loginBtn.onclick = async () => {
   loadData();
 };
 
-/* SUBMIT */
+/* SUBMIT VOTE */
 submitVote.onclick = async () => {
-  const [key] = categories[currentIndex];
+  const [rawKey] = categories[currentIndex];
+  // Sanitize the category name for the path
+  const safeKey = rawKey.split("(")[0].trim().replace(/[.#$[\]\s]/g, "_");
+  const voterID = localStorage.getItem("safeName");
 
-  await set(
-    ref(db, `votes/${auth.currentUser.uid}/${key}`),
-    {
-      selections: Array.from(selected),
-      timestamp: Date.now()
+  submitVote.disabled = true;
+  submitVote.innerText = "Registering Ballot...";
+
+  try {
+    // UPDATED: Now saves to votes/Name_Surname/Category_Name
+    await set(
+      ref(db, `votes/${voterID}/${safeKey}`),
+      {
+        voterDisplay: localStorage.getItem("name"),
+        selections: Array.from(selected),
+        timestamp: Date.now()
+      }
+    );
+
+    currentIndex++;
+    if (currentIndex < categories.length) {
+      submitVote.innerText = "Submit Vote";
+      loadCategory();
+    } else {
+      triggerFinale();
     }
-  );
-
-  currentIndex++;
-  if (currentIndex < categories.length) {
-    loadCategory();
-  } else {
-    alert("Voting complete. Thank you!");
-    location.reload();
+  } catch (err) {
+    alert("Ballot transmission failed.");
+    submitVote.disabled = false;
   }
 };
+
+/* THE FINALE */
+function triggerFinale() {
+  // Gold & White Confetti
+  const duration = 5 * 1000;
+  const end = Date.now() + duration;
+
+  (function frame() {
+    confetti({
+      particleCount: 3,
+      angle: 60,
+      spread: 55,
+      origin: { x: 0 },
+      colors: ['#d4af37', '#ffffff']
+    });
+    confetti({
+      particleCount: 3,
+      angle: 120,
+      spread: 55,
+      origin: { x: 1 },
+      colors: ['#d4af37', '#ffffff']
+    });
+
+    if (Date.now() < end) {
+      requestAnimationFrame(frame);
+    }
+  }());
+
+  optionsContainer.innerHTML = `
+    <div class="text-center py-5">
+        <h2 class="gala-font" style="color: #d4af37">Thank You</h2>
+        <p>Your official selections have been recorded for the 2025 Gala.</p>
+        <button onclick="location.reload()" class="btn-gala mt-3" style="font-size: 0.8rem">Return to Entrance</button>
+    </div>`;
+  submitVote.style.display = "none";
+}
 </script>
 
 </body>
