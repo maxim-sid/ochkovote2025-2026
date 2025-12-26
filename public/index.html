@@ -67,7 +67,7 @@ body {
 .form-control-gala {
   background: rgba(255,255,255,0.05);
   border: 1px solid rgba(212, 175, 55, 0.3);
-  color: white;
+  color: white !important;
   border-radius: 0;
   border-bottom: 2px solid var(--gold);
   padding: 15px;
@@ -75,9 +75,12 @@ body {
 }
 
 .form-control-gala:focus {
-  background: rgba(255,255,255,0.08);
-  box-shadow: 0 0 15px var(--gold-glow);
+  background: rgba(255, 255, 255, 0.12); /* Slightly lighter background on focus */
+  box-shadow: 0 0 20px var(--gold-glow);
   border-color: var(--gold);
+  color: #ffffff !important; /* Forces text to white */
+  outline: none;
+  caret-color: var(--gold); /* Makes the blinking cursor gold */
 }
 
 /* VOTING UI */
@@ -156,6 +159,14 @@ body {
   transition: width 0.8s ease;
 }
 
+/* Fix for Chrome/Safari white background on autofill */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: white !important;
+  -webkit-box-shadow: 0 0 0px 1000px #1a1a1a inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
 </style>
 </head>
 
@@ -165,7 +176,7 @@ body {
   <div class="auth-card">
     <h6 class="gala-font mb-1">ОФФИЦИАЛЬНОЕ ГОЛОСОВАНИЕ</h6>
     <h2 class="title-font mb-5">Ваше имя</h2>
-    <input id="userName" class="form-control form-control-gala mb-4" placeholder="FULL NAME">
+    <input id="userName" class="form-control form-control-gala mb-4" placeholder="Полное Имя">
     <button id="loginBtn" class="btn-gala w-100">Зайти на церемонию</button>
   </div>
 </div>
