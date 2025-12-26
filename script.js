@@ -2,13 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-/* 🔐 Firebase config (GitHub Pages replaces these) */
-const firebaseConfig = {
-  apiKey: window.__FIREBASE__.API_KEY,
-  databaseURL: window.__FIREBASE__.DB_URL,
-  projectId: window.__FIREBASE__.PROJECT_ID,
-  appId: window.__FIREBASE__.APP_ID
-};
+import { firebaseConfig } from "./firebase-config.js";
 
 console.log("DB URL =", firebaseConfig);
 
